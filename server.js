@@ -89,24 +89,35 @@ app.post('/api/recommend', async (req, res) => {
       long: 'over 400 pages'
     };
 
-    const prompt = `Based on the following preferences, recommend 3 books:
+    const prompt = `Provide 3 book recommendations based on these criteria:
 
 Genres: ${genres.join(', ')}
 Book Length: ${lengthMap[length]}
 Topics: ${topics.join(', ')}
 
-For each book (numbered 1, 2, and 3), provide:
-- Title and Author
-- Page count (approximate)
-- A brief summary (2-3 sentences)
-- Why it matches their preferences
+Format each recommendation exactly as follows:
 
-Write in a warm, conversational tone as if speaking directly to a reader. Use clear paragraphs with line breaks between books. Number each recommendation (1, 2, 3) but avoid using other markdown formatting symbols (**, ###, emojis). Write naturally and professionally, like a knowledgeable librarian having a friendly conversation.`;
+1. [Title] by [Author]
+Page Count: [number]
+Summary: [2-3 sentence summary]
+Match Reason: [Why this fits their preferences]
+
+2. [Title] by [Author]
+Page Count: [number]
+Summary: [2-3 sentence summary]
+Match Reason: [Why this fits their preferences]
+
+3. [Title] by [Author]
+Page Count: [number]
+Summary: [2-3 sentence summary]
+Match Reason: [Why this fits their preferences]
+
+CRITICAL: Do not include any preamble, introduction, or concluding remarks. Start directly with "1." and end after the third recommendation. Use plain text only - no markdown symbols (**, ###), no emojis, no special formatting. Write in clear, professional prose.`;
 
     const messages = [
       { 
         role: 'system', 
-        content: 'You are an experienced librarian with decades of knowledge about books across all genres. You speak in a warm, professional, conversational tone - friendly but not overly casual. You write in clear prose with simple numbering (1, 2, 3) but without markdown formatting, emojis, or special symbols like ** or ###. Your recommendations are thoughtful, well-reasoned, and tailored to each reader. You write as if having a one-on-one conversation with a book lover who trusts your expertise.' 
+        content: 'You are a professional book recommendation system. Provide direct, well-structured recommendations without casual conversation, introductions, or sign-offs. Use the exact format requested. Write in clear, professional prose without markdown formatting, emojis, or special symbols. Your tone is knowledgeable and efficient.' 
       },
       { 
         role: 'user', 

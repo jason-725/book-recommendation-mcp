@@ -11,30 +11,121 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-secondary: white;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --border-color: #e0e0e0;
+            --accent-color: #667eea;
+            --card-bg: #f8f9fa;
+            --error-bg: #fee;
+            --error-text: #c33;
+        }
+
+        body.dark-mode {
+            --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --bg-secondary: #0f3460;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --border-color: #2a2a3e;
+            --accent-color: #667eea;
+            --card-bg: #1a1a2e;
+            --error-bg: #3d1f1f;
+            --error-text: #ff6b6b;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--bg-primary);
             min-height: 100vh;
             padding: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .header {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .nav-btn, .dark-mode-toggle {
+            padding: 10px 20px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover, .dark-mode-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .dark-mode-toggle {
+            font-size: 14px;
+            padding: 10px;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        .main-content {
+            background: var(--bg-secondary);
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             padding: 40px;
+            transition: background 0.3s ease;
+        }
+
+        .sidebar {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transition: background 0.3s ease;
         }
 
         h1 {
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 10px;
             font-size: 2.5em;
         }
 
         .subtitle {
-            color: #666;
+            color: var(--text-secondary);
             margin-bottom: 30px;
             font-size: 1.1em;
         }
@@ -46,28 +137,60 @@
         label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
+            color: var(--text-primary);
             font-weight: 600;
             font-size: 1.1em;
         }
 
-        input, select {
+        .genre-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .genre-tag {
+            padding: 8px 16px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .genre-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .genre-tag.selected {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        input, select, textarea {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-color);
             border-radius: 8px;
             font-size: 16px;
             transition: border-color 0.3s;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
         }
 
-        input:focus, select:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--accent-color);
         }
 
         .hint {
             font-size: 0.9em;
-            color: #666;
+            color: var(--text-secondary);
             margin-top: 5px;
         }
 
@@ -99,7 +222,7 @@
             display: none;
             text-align: center;
             margin: 20px 0;
-            color: #667eea;
+            color: var(--accent-color);
         }
 
         .loading.active {
@@ -107,8 +230,8 @@
         }
 
         .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--accent-color);
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -124,7 +247,7 @@
         .results {
             margin-top: 30px;
             padding: 25px;
-            background: #f8f9fa;
+            background: var(--card-bg);
             border-radius: 12px;
             display: none;
         }
@@ -134,19 +257,52 @@
         }
 
         .results h2 {
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .recommendations {
             white-space: pre-wrap;
             line-height: 1.8;
-            color: #444;
+            color: var(--text-primary);
+        }
+
+        .book-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            width: auto;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
 
         .error {
-            background: #fee;
-            color: #c33;
+            background: var(--error-bg);
+            color: var(--error-text);
             padding: 15px;
             border-radius: 8px;
             margin-top: 20px;
@@ -156,79 +312,289 @@
         .error.active {
             display: block;
         }
+
+        .sidebar h3 {
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .history-item, .favorite-item {
+            background: var(--card-bg);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .history-item:hover, .favorite-item:hover {
+            border-color: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        .history-item small, .favorite-item small {
+            color: var(--text-secondary);
+            display: block;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .favorite-item {
+            position: relative;
+            padding-right: 40px;
+        }
+
+        .favorite-details {
+            margin-top: 10px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .favorite-details div {
+            margin-bottom: 8px;
+        }
+
+        .favorite-details strong {
+            color: var(--text-primary);
+            display: inline-block;
+            min-width: 100px;
+        }
+
+        .favorite-description {
+            margin-top: 8px;
+            max-height: 40px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .favorite-description.expanded {
+            max-height: 500px;
+        }
+
+        .show-more-btn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            cursor: pointer;
+            font-size: 12px;
+            padding: 5px 0;
+            text-decoration: underline;
+            width: auto;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .show-more-btn:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .remove-favorite {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--error-text);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-state {
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                max-height: none;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="header">
+        <div class="nav-buttons">
+            <button class="nav-btn active" data-view="recommend">Recommend</button>
+            <button class="nav-btn" data-view="favorites">Favorites</button>
+        </div>
+        <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode">🌙</button>
+    </div>
+
     <div class="container">
-        <h1>Book Recommendations</h1>
-        <p class="subtitle">Powered by MCP & OpenRouter</p>
+        <div class="main-content">
+            <!-- RECOMMEND VIEW -->
+            <div class="view active" id="recommendView">
+                <h1>Book Recommendations</h1>
+                <p class="subtitle">Powered by MCP & OpenRouter</p>
 
-        <form id="recommendForm">
-            <div class="form-group">
-                <label for="genres">Genres (comma-separated)</label>
-                <input 
-                    type="text" 
-                    id="genres" 
-                    placeholder="e.g., Science Fiction, Mystery, Fantasy"
-                    required
-                >
-                <div class="hint">Enter your favorite genres separated by commas</div>
+                <form id="recommendForm">
+                    <div class="form-group">
+                        <label>Select Genres</label>
+                        <div class="genre-tags" id="genreTags"></div>
+                        <div class="hint">Click to select multiple genres</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="length">Book Length</label>
+                        <select id="length" required>
+                            <option value="">Select a length...</option>
+                            <option value="short">Short (under 250 pages)</option>
+                            <option value="medium">Medium (250-400 pages)</option>
+                            <option value="long">Long (over 400 pages)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="topics">Topics of Interest</label>
+                        <textarea 
+                            id="topics" 
+                            rows="3"
+                            placeholder="e.g., Space exploration, Detective stories, Magic"
+                            required
+                        ></textarea>
+                        <div class="hint">What subjects or themes interest you?</div>
+                    </div>
+
+                    <button type="submit" id="submitBtn">Get Recommendations</button>
+                </form>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Finding perfect books for you...</p>
+                </div>
+
+                <div class="error" id="error"></div>
+
+                <div class="results" id="results">
+                    <h2>Your Personalized Recommendations</h2>
+                    <div class="recommendations" id="recommendations"></div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="length">Book Length</label>
-                <select id="length" required>
-                    <option value="">Select a length...</option>
-                    <option value="short">Short (under 250 pages)</option>
-                    <option value="medium">Medium (250-400 pages)</option>
-                    <option value="long">Long (over 400 pages)</option>
-                </select>
+            <!-- FAVORITES VIEW -->
+            <div class="view" id="favoritesView">
+                <h1>Your Favorite Books</h1>
+                <p class="subtitle">Saved recommendations</p>
+                <div id="favoritesList"></div>
             </div>
-
-            <div class="form-group">
-                <label for="topics">Topics of Interest (comma-separated)</label>
-                <input 
-                    type="text" 
-                    id="topics" 
-                    placeholder="e.g., Space exploration, Detective stories, Magic"
-                    required
-                >
-                <div class="hint">What subjects or themes interest you?</div>
-            </div>
-
-            <button type="submit" id="submitBtn">Get Recommendations</button>
-        </form>
-
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Finding perfect books for you...</p>
         </div>
 
-        <div class="error" id="error"></div>
-
-        <div class="results" id="results">
-            <h2>Your Personalized Recommendations</h2>
-            <div class="recommendations" id="recommendations"></div>
+        <div class="sidebar">
+            <h3>Recent Searches</h3>
+            <div id="historyList"></div>
         </div>
     </div>
 
     <script>
+        // Genre options
+        const genres = [
+            'Fiction', 'Non-Fiction', 'Mystery', 'Thriller', 'Romance',
+            'Science Fiction', 'Fantasy', 'Horror', 'Historical Fiction',
+            'Biography', 'Self-Help', 'Business', 'Poetry', 'Young Adult',
+            'Literary Fiction', 'Crime', 'Adventure', 'Dystopian'
+        ];
+
+        // State
+        let selectedGenres = [];
+        let currentRecommendation = null;
+        let history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+        let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+
+        // DOM elements
         const form = document.getElementById('recommendForm');
         const loading = document.getElementById('loading');
         const results = document.getElementById('results');
         const error = document.getElementById('error');
         const submitBtn = document.getElementById('submitBtn');
+        const genreTags = document.getElementById('genreTags');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const views = document.querySelectorAll('.view');
 
+        // Initialize genre tags
+        genres.forEach(genre => {
+            const tag = document.createElement('div');
+            tag.className = 'genre-tag';
+            tag.textContent = genre;
+            tag.addEventListener('click', () => toggleGenre(genre, tag));
+            genreTags.appendChild(tag);
+        });
+
+        function toggleGenre(genre, element) {
+            if (selectedGenres.includes(genre)) {
+                selectedGenres = selectedGenres.filter(g => g !== genre);
+                element.classList.remove('selected');
+            } else {
+                selectedGenres.push(genre);
+                element.classList.add('selected');
+            }
+        }
+
+        // Dark mode
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.textContent = '☀️';
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+        });
+
+        // Navigation
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const viewName = btn.dataset.view;
+                navBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                views.forEach(v => v.classList.remove('active'));
+                document.getElementById(viewName + 'View').classList.add('active');
+                
+                if (viewName === 'favorites') {
+                    renderFavorites();
+                }
+            });
+        });
+
+        // Form submission
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const genres = document.getElementById('genres').value
-                .split(',')
-                .map(g => g.trim())
-                .filter(g => g);
-            
+            if (selectedGenres.length === 0) {
+                error.textContent = 'Please select at least one genre';
+                error.classList.add('active');
+                return;
+            }
+
             const length = document.getElementById('length').value;
-            
             const topics = document.getElementById('topics').value
                 .split(',')
                 .map(t => t.trim())
@@ -245,7 +611,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ genres, length, topics })
+                    body: JSON.stringify({ genres: selectedGenres, length, topics })
                 });
 
                 const data = await response.json();
@@ -254,8 +620,63 @@
                     throw new Error(data.error || 'Failed to get recommendations');
                 }
 
-                document.getElementById('recommendations').textContent = data.recommendations;
+                // Parse and display recommendations with copy buttons
+                const recommendationsText = data.recommendations;
+                const recommendationsDiv = document.getElementById('recommendations');
+                
+                // Parse the recommendations by splitting on numbered items
+                const bookSections = recommendationsText.split(/(?=\d+\.\s+)/);
+                let formattedHTML = '';
+                
+                bookSections.forEach((section, idx) => {
+                    if (!section.trim()) return;
+                    
+                    // Extract title and author from first line
+                    const firstLineMatch = section.match(/^(\d+)\.\s+(.+?)\s+by\s+(.+?)$/m);
+                    
+                    if (firstLineMatch) {
+                        const bookNum = firstLineMatch[1];
+                        const title = firstLineMatch[2].trim();
+                        const author = firstLineMatch[3].trim();
+                        const bookInfo = `${title} by ${author}`;
+                        
+                        // Extract the rest of the content
+                        const restOfContent = section.substring(firstLineMatch[0].length);
+                        
+                        // Bold the first line
+                        formattedHTML += `<div style="margin-bottom: 30px;">`;
+                        formattedHTML += `<strong style="font-size: 1.1em;">${bookNum}. ${title} by ${author}</strong>`;
+                        formattedHTML += restOfContent;
+                        
+                        // Add buttons on new line
+                        formattedHTML += `<div class="book-actions">`;
+                        formattedHTML += `<button class="action-btn" onclick="copyBookInfo('${bookInfo.replace(/'/g, "\\'")}', event)" style="font-size: 12px; padding: 6px 12px;">📋 Copy</button>`;
+                        formattedHTML += `<button class="action-btn" onclick="saveSingleBook('${title.replace(/'/g, "\\'")}', '${author.replace(/'/g, "\\'")}', ${bookNum}, event)" style="font-size: 12px; padding: 6px 12px;">💾 Favorite</button>`;
+                        formattedHTML += `</div>`;
+                        formattedHTML += `</div>`;
+                    } else {
+                        formattedHTML += section;
+                    }
+                });
+
+                recommendationsDiv.innerHTML = formattedHTML;
+
+                currentRecommendation = {
+                    genres: selectedGenres,
+                    length,
+                    topics,
+                    result: data.recommendations,
+                    timestamp: new Date().toISOString()
+                };
+
                 results.classList.add('active');
+
+                // Add to history
+                history.unshift(currentRecommendation);
+                if (history.length > 10) history = history.slice(0, 10);
+                localStorage.setItem('searchHistory', JSON.stringify(history));
+                renderHistory();
+
             } catch (err) {
                 error.textContent = `Error: ${err.message}`;
                 error.classList.add('active');
@@ -264,6 +685,220 @@
                 submitBtn.disabled = false;
             }
         });
+
+        // Save single book to favorites
+        window.saveSingleBook = function(title, author, bookNum, event) {
+            event.stopPropagation();
+            
+            if (!currentRecommendation) return;
+            
+            // Extract the specific book details from the full recommendation
+            const bookPattern = new RegExp(`${bookNum}\\.\\s+${title}\\s+by\\s+${author}[\\s\\S]*?(?=\\d+\\.|$)`);
+            const bookMatch = currentRecommendation.result.match(bookPattern);
+            
+            if (!bookMatch) {
+                alert('Could not save book details');
+                return;
+            }
+            
+            const bookText = bookMatch[0];
+            
+            // Parse details
+            const pageCountMatch = bookText.match(/Page Count:\s*(.+)/);
+            const summaryMatch = bookText.match(/Summary:\s*(.+?)(?=Match Reason:|$)/s);
+            
+            const favoriteBook = {
+                title,
+                author,
+                pageCount: pageCountMatch ? pageCountMatch[1].trim() : 'Unknown',
+                summary: summaryMatch ? summaryMatch[1].trim() : 'No summary available',
+                genres: currentRecommendation.genres,
+                timestamp: new Date().toISOString(),
+                id: Date.now()
+            };
+            
+            favorites.unshift(favoriteBook);
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✓ Saved!';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 2000);
+        };
+
+        // Parse books from recommendation text
+        function parseBooks(text) {
+            const books = [];
+            const bookPattern = /(\d+)\.\s+(.+?)\s+by\s+(.+?)[\n\r]+Page Count:\s*(.+?)[\n\r]+Summary:\s*(.+?)[\n\r]+Match Reason:/gs;
+            
+            let match;
+            while ((match = bookPattern.exec(text)) !== null) {
+                books.push({
+                    number: match[1],
+                    title: match[2].trim(),
+                    author: match[3].trim(),
+                    pageCount: match[4].trim(),
+                    summary: match[5].trim()
+                });
+            }
+            
+            return books;
+        }
+
+        // Format timestamp with date and time
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Copy book info
+        window.copyBookInfo = function(bookInfo, event) {
+            event.stopPropagation();
+            navigator.clipboard.writeText(bookInfo).then(() => {
+                const btn = event.target;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✓ Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+
+        // Render history
+        function renderHistory() {
+            const historyList = document.getElementById('historyList');
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="empty-state">No recent searches</div>';
+                return;
+            }
+
+            historyList.innerHTML = history.map((item, index) => `
+                <div class="history-item" onclick="loadHistory(${index})">
+                    <strong>${item.genres.join(', ')}</strong>
+                    <small>${formatTimestamp(item.timestamp)}</small>
+                </div>
+            `).join('');
+        }
+
+        function loadHistory(index) {
+            const item = history[index];
+            
+            // Reset form
+            selectedGenres = [...item.genres];
+            document.querySelectorAll('.genre-tag').forEach(tag => {
+                if (item.genres.includes(tag.textContent)) {
+                    tag.classList.add('selected');
+                } else {
+                    tag.classList.remove('selected');
+                }
+            });
+            
+            document.getElementById('length').value = item.length;
+            document.getElementById('topics').value = item.topics.join(', ');
+            
+            // Show result
+            currentRecommendation = item;
+            const recommendationsDiv = document.getElementById('recommendations');
+            recommendationsDiv.innerHTML = '<div style="white-space: pre-wrap; line-height: 1.8;">' + item.result + '</div>';
+            results.classList.add('active');
+            
+            // Switch to recommend view
+            document.querySelector('[data-view="recommend"]').click();
+        }
+
+        // Render favorites
+        function renderFavorites() {
+            const favoritesList = document.getElementById('favoritesList');
+            
+            if (favorites.length === 0) {
+                favoritesList.innerHTML = '<div class="empty-state">No saved favorites yet</div>';
+                return;
+            }
+
+            favoritesList.innerHTML = favorites.map((item, index) => {
+                // Handle new format (single book)
+                if (item.title && item.author) {
+                    return `
+                        <div class="favorite-item">
+                            <strong>${item.title} by ${item.author}</strong>
+                            <button class="remove-favorite" onclick="removeFavorite(${index})" title="Remove">×</button>
+                            
+                            <div class="favorite-details">
+                                <div><strong>Genre:</strong> ${item.genres.join(', ')}</div>
+                                <div><strong>Page Count:</strong> ${item.pageCount}</div>
+                                <div class="favorite-description" id="desc-${index}">
+                                    <strong>Description:</strong> ${item.summary}
+                                </div>
+                                <button class="show-more-btn" onclick="toggleDescription(${index}, '')">Show more</button>
+                            </div>
+                            <small style="display: block; margin-top: 10px;">${formatTimestamp(item.timestamp)}</small>
+                        </div>
+                    `;
+                }
+                
+                // Handle old format (multiple books) - for backwards compatibility
+                const books = item.books || parseBooks(item.result || '');
+                
+                if (books.length === 0) {
+                    return `
+                        <div class="favorite-item">
+                            <strong>${item.genres.join(', ')}</strong>
+                            <small>${formatTimestamp(item.timestamp)}</small>
+                            <div style="margin-top: 10px; color: var(--text-secondary);">
+                                ${(item.result || '').substring(0, 200)}...
+                            </div>
+                            <button class="remove-favorite" onclick="removeFavorite(${index})" title="Remove">×</button>
+                        </div>
+                    `;
+                }
+                
+                return books.map(book => `
+                    <div class="favorite-item">
+                        <strong>${book.title} by ${book.author}</strong>
+                        <button class="remove-favorite" onclick="removeFavorite(${index})" title="Remove">×</button>
+                        
+                        <div class="favorite-details">
+                            <div><strong>Genre:</strong> ${item.genres.join(', ')}</div>
+                            <div><strong>Page Count:</strong> ${book.pageCount}</div>
+                            <div class="favorite-description" id="desc-${index}-${book.number}">
+                                <strong>Description:</strong> ${book.summary}
+                            </div>
+                            <button class="show-more-btn" onclick="toggleDescription(${index}, '${book.number}')">Show more</button>
+                        </div>
+                        <small style="display: block; margin-top: 10px;">${formatTimestamp(item.timestamp)}</small>
+                    </div>
+                `).join('');
+            }).join('');
+        }
+
+        window.toggleDescription = function(index, bookNumber) {
+            const descId = bookNumber ? `desc-${index}-${bookNumber}` : `desc-${index}`;
+            const descElement = document.getElementById(descId);
+            const btn = event.target;
+            
+            if (descElement.classList.contains('expanded')) {
+                descElement.classList.remove('expanded');
+                btn.textContent = 'Show more';
+            } else {
+                descElement.classList.add('expanded');
+                btn.textContent = 'Show less';
+            }
+        }
+
+        function removeFavorite(index) {
+            if (confirm('Remove this favorite?')) {
+                favorites.splice(index, 1);
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                renderFavorites();
+            }
+        }
+
+        // Initialize
+        renderHistory();
+        renderFavorites();
     </script>
 </body>
 </html>
