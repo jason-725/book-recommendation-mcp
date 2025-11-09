@@ -59,7 +59,7 @@ async function callOpenRouter(messages) {
     body: JSON.stringify({
       model: 'openai/gpt-4o-mini',
       messages: messages,
-      temperature: 0.7,
+      temperature: 0.6,
       max_tokens: 1500  // Limit response length for faster completion
     })
   });
