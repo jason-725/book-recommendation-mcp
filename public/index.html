@@ -434,6 +434,39 @@
         .favorite-item {
             position: relative;
             padding-right: 40px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .favorite-cover {
+            flex-shrink: 0;
+            width: 80px;
+            height: 120px;
+            background: var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .favorite-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .favorite-cover-placeholder {
+            color: var(--text-secondary);
+            font-size: 10px;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .favorite-content {
+            flex: 1;
+            min-width: 0;
         }
 
         .favorite-details {
@@ -800,7 +833,7 @@
         });
 
         // Save single book to favorites
-        window.saveSingleBook = function(title, author, bookNum, event) {
+        window.saveSingleBook = async function(title, author, bookNum, event) {
             event.stopPropagation();
             
             if (!currentRecommendation) return;
@@ -820,12 +853,16 @@
             const pageCountMatch = bookText.match(/Page Count:\s*(.+)/);
             const summaryMatch = bookText.match(/Summary:\s*(.+?)(?=Match Reason:|$)/s);
             
+            // Fetch book cover
+            const coverUrl = await fetchBookCover(title, author);
+            
             const favoriteBook = {
                 title,
                 author,
                 pageCount: pageCountMatch ? pageCountMatch[1].trim() : 'Unknown',
                 summary: summaryMatch ? summaryMatch[1].trim() : 'No summary available',
                 genres: currentRecommendation.genres,
+                coverUrl: coverUrl,
                 timestamp: new Date().toISOString(),
                 id: Date.now()
             };
@@ -957,18 +994,26 @@
                 if (item.title && item.author) {
                     return `
                         <div class="favorite-item">
-                            <strong>${item.title} by ${item.author}</strong>
-                            <button class="remove-favorite" onclick="removeFavorite(${index})" title="Remove">×</button>
-                            
-                            <div class="favorite-details">
-                                <div><strong>Genre:</strong> ${item.genres.join(', ')}</div>
-                                <div><strong>Page Count:</strong> ${item.pageCount}</div>
-                                <div class="favorite-description" id="desc-${index}">
-                                    <strong>Description:</strong> ${item.summary}
-                                </div>
-                                <button class="show-more-btn" onclick="toggleDescription(${index}, '')">Show more</button>
+                            <div class="favorite-cover">
+                                ${item.coverUrl 
+                                    ? `<img src="${item.coverUrl}" alt="${item.title} cover" onerror="this.parentElement.innerHTML='<div class=favorite-cover-placeholder>No cover</div>'">`
+                                    : '<div class="favorite-cover-placeholder">No cover available</div>'
+                                }
                             </div>
-                            <small style="display: block; margin-top: 10px;">${formatTimestamp(item.timestamp)}</small>
+                            <div class="favorite-content">
+                                <strong>${item.title} by ${item.author}</strong>
+                                
+                                <div class="favorite-details">
+                                    <div><strong>Genre:</strong> ${item.genres.join(', ')}</div>
+                                    <div><strong>Page Count:</strong> ${item.pageCount}</div>
+                                    <div class="favorite-description" id="desc-${index}">
+                                        <strong>Description:</strong> ${item.summary}
+                                    </div>
+                                    <button class="show-more-btn" onclick="toggleDescription(${index}, '')">Show more</button>
+                                </div>
+                                <small style="display: block; margin-top: 10px;">${formatTimestamp(item.timestamp)}</small>
+                            </div>
+                            <button class="remove-favorite" onclick="removeFavorite(${index})" title="Remove">×</button>
                         </div>
                     `;
                 }
@@ -979,10 +1024,12 @@
                 if (books.length === 0) {
                     return `
                         <div class="favorite-item">
-                            <strong>${item.genres.join(', ')}</strong>
-                            <small>${formatTimestamp(item.timestamp)}</small>
-                            <div style="margin-top: 10px; color: var(--text-secondary);">
-                                ${(item.result || '').substring(0, 200)}...
+                            <div class="favorite-content">
+                                <strong>${item.genres.join(', ')}</strong>
+                                <small>${formatTimestamp(item.timestamp)}</small>
+                                <div style="margin-top: 10px; color: var(--text-secondary);">
+                                    ${(item.result || '').substring(0, 200)}...
+                                </div>
                             </div>
                             <button class="remove-favorite" onclick="removeFavorite(${index})" title="Remove">×</button>
                         </div>
@@ -991,18 +1038,20 @@
                 
                 return books.map(book => `
                     <div class="favorite-item">
-                        <strong>${book.title} by ${book.author}</strong>
-                        <button class="remove-favorite" onclick="removeFavorite(${index})" title="Remove">×</button>
-                        
-                        <div class="favorite-details">
-                            <div><strong>Genre:</strong> ${item.genres.join(', ')}</div>
-                            <div><strong>Page Count:</strong> ${book.pageCount}</div>
-                            <div class="favorite-description" id="desc-${index}-${book.number}">
-                                <strong>Description:</strong> ${book.summary}
+                        <div class="favorite-content">
+                            <strong>${book.title} by ${book.author}</strong>
+                            
+                            <div class="favorite-details">
+                                <div><strong>Genre:</strong> ${item.genres.join(', ')}</div>
+                                <div><strong>Page Count:</strong> ${book.pageCount}</div>
+                                <div class="favorite-description" id="desc-${index}-${book.number}">
+                                    <strong>Description:</strong> ${book.summary}
+                                </div>
+                                <button class="show-more-btn" onclick="toggleDescription(${index}, '${book.number}')">Show more</button>
                             </div>
-                            <button class="show-more-btn" onclick="toggleDescription(${index}, '${book.number}')">Show more</button>
+                            <small style="display: block; margin-top: 10px;">${formatTimestamp(item.timestamp)}</small>
                         </div>
-                        <small style="display: block; margin-top: 10px;">${formatTimestamp(item.timestamp)}</small>
+                        <button class="remove-favorite" onclick="removeFavorite(${index})" title="Remove">×</button>
                     </div>
                 `).join('');
             }).join('');
