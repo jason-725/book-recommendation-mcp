@@ -312,6 +312,52 @@
             margin-bottom: 20px;
         }
 
+        .book-recommendation {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: 12px;
+        }
+
+        .book-cover {
+            flex-shrink: 0;
+            width: 128px;
+            height: 192px;
+            background: var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .book-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .book-cover-placeholder {
+            color: var(--text-secondary);
+            font-size: 12px;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .book-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .book-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
         .result-actions {
             display: flex;
             gap: 10px;
@@ -664,7 +710,7 @@
                     throw new Error(data.error || 'Failed to get recommendations');
                 }
 
-                // Parse and display recommendations with copy buttons
+                // Parse and display recommendations with copy buttons and book covers
                 const recommendationsText = data.recommendations;
                 const recommendationsDiv = document.getElementById('recommendations');
                 
@@ -672,8 +718,9 @@
                 const bookSections = recommendationsText.split(/(?=\d+\.\s+)/);
                 let formattedHTML = '';
                 
-                bookSections.forEach((section, idx) => {
-                    if (!section.trim()) return;
+                // Process each book section
+                const bookPromises = bookSections.map(async (section, idx) => {
+                    if (!section.trim()) return '';
                     
                     // Extract title and author from first line
                     const firstLineMatch = section.match(/^(\d+)\.\s+(.+?)\s+by\s+(.+?)$/m);
@@ -687,22 +734,44 @@
                         // Extract the rest of the content
                         const restOfContent = section.substring(firstLineMatch[0].length);
                         
-                        // Bold the first line
-                        formattedHTML += `<div style="margin-bottom: 30px;">`;
-                        formattedHTML += `<strong style="font-size: 1.1em;">${bookNum}. ${title} by ${author}</strong>`;
-                        formattedHTML += restOfContent;
+                        // Fetch book cover
+                        const coverUrl = await fetchBookCover(title, author);
                         
-                        // Add buttons on new line
-                        formattedHTML += `<div class="book-actions">`;
-                        formattedHTML += `<button class="action-btn" onclick="copyBookInfo('${bookInfo.replace(/'/g, "\\'")}', event)" style="font-size: 12px; padding: 6px 12px;">📋 Copy</button>`;
-                        formattedHTML += `<button class="action-btn" onclick="saveSingleBook('${title.replace(/'/g, "\\'")}', '${author.replace(/'/g, "\\'")}', ${bookNum}, event)" style="font-size: 12px; padding: 6px 12px;">💾 Favorite</button>`;
-                        formattedHTML += `</div>`;
-                        formattedHTML += `</div>`;
+                        // Build HTML with book cover
+                        let html = `<div class="book-recommendation">`;
+                        
+                        // Book cover
+                        html += `<div class="book-cover">`;
+                        if (coverUrl) {
+                            html += `<img src="${coverUrl}" alt="${title} cover" onerror="this.parentElement.innerHTML='<div class=book-cover-placeholder>No cover available</div>'">`;
+                        } else {
+                            html += `<div class="book-cover-placeholder">No cover available</div>`;
+                        }
+                        html += `</div>`;
+                        
+                        // Book content
+                        html += `<div class="book-content">`;
+                        html += `<div class="book-title">${bookNum}. ${title} by ${author}</div>`;
+                        html += `<div style="white-space: pre-wrap; line-height: 1.6;">${restOfContent}</div>`;
+                        
+                        // Add buttons
+                        html += `<div class="book-actions">`;
+                        html += `<button class="action-btn" onclick="copyBookInfo('${bookInfo.replace(/'/g, "\\'")}', event)" style="font-size: 12px; padding: 6px 12px;">📋 Copy</button>`;
+                        html += `<button class="action-btn" onclick="saveSingleBook('${title.replace(/'/g, "\\'")}', '${author.replace(/'/g, "\\'")}', ${bookNum}, event)" style="font-size: 12px; padding: 6px 12px;">💾 Favorite</button>`;
+                        html += `</div>`;
+                        html += `</div>`;
+                        html += `</div>`;
+                        
+                        return html;
                     } else {
-                        formattedHTML += section;
+                        return `<div style="white-space: pre-wrap;">${section}</div>`;
                     }
                 });
-
+                
+                // Wait for all book covers to load
+                const bookHTMLs = await Promise.all(bookPromises);
+                formattedHTML = bookHTMLs.join('');
+                
                 recommendationsDiv.innerHTML = formattedHTML;
 
                 currentRecommendation = {
@@ -808,6 +877,27 @@
                     btn.innerHTML = originalText;
                 }, 2000);
             });
+        }
+
+        // Fetch book cover from Google Books API
+        async function fetchBookCover(title, author) {
+            try {
+                const query = encodeURIComponent(`${title} ${author}`);
+                const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=1`);
+                const data = await response.json();
+                
+                if (data.items && data.items.length > 0) {
+                    const book = data.items[0];
+                    if (book.volumeInfo.imageLinks) {
+                        // Try to get higher quality thumbnail
+                        return book.volumeInfo.imageLinks.thumbnail.replace('zoom=1', 'zoom=2');
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('Error fetching book cover:', error);
+                return null;
+            }
         }
 
         // Render history
