@@ -310,6 +310,33 @@
             gap: 10px;
             margin-top: 10px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .book-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .book-link {
+            padding: 6px 12px;
+            background: transparent;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .book-link:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
         }
 
         .book-recommendation {
@@ -792,6 +819,14 @@
                         html += `<button class="action-btn" onclick="copyBookInfo('${bookInfo.replace(/'/g, "\\'")}', event)" style="font-size: 12px; padding: 6px 12px;">📋 Copy</button>`;
                         html += `<button class="action-btn" onclick="saveSingleBook('${title.replace(/'/g, "\\'")}', '${author.replace(/'/g, "\\'")}', ${bookNum}, event)" style="font-size: 12px; padding: 6px 12px;">💾 Favorite</button>`;
                         html += `</div>`;
+                        
+                        // Add library and purchase links
+                        html += `<div class="book-links">`;
+                        html += `<a href="${generateWorldCatLink(title, author)}" target="_blank" class="book-link">🏛️ Find in Library</a>`;
+                        html += `<a href="${generateAmazonLink(title, author)}" target="_blank" class="book-link">📦 Buy on Amazon</a>`;
+                        html += `<a href="${generateGoodreadsLink(title, author)}" target="_blank" class="book-link">📖 Goodreads</a>`;
+                        html += `</div>`;
+                        
                         html += `</div>`;
                         html += `</div>`;
                         
@@ -937,6 +972,24 @@
             }
         }
 
+        // Generate WorldCat library search link
+        function generateWorldCatLink(title, author) {
+            const query = encodeURIComponent(`${title} ${author}`);
+            return `https://www.worldcat.org/search?q=${query}`;
+        }
+
+        // Generate Amazon search link
+        function generateAmazonLink(title, author) {
+            const query = encodeURIComponent(`${title} ${author}`);
+            return `https://www.amazon.com/s?k=${query}&i=stripbooks`;
+        }
+
+        // Generate Goodreads search link
+        function generateGoodreadsLink(title, author) {
+            const query = encodeURIComponent(`${title} ${author}`);
+            return `https://www.goodreads.com/search?q=${query}`;
+        }
+
         // Render history
         function renderHistory() {
             const historyList = document.getElementById('historyList');
@@ -1012,6 +1065,12 @@
                                     <button class="show-more-btn" onclick="toggleDescription(${index}, '')">Show more</button>
                                 </div>
                                 <small style="display: block; margin-top: 10px;">${formatTimestamp(item.timestamp)}</small>
+                                
+                                <div class="book-links" style="margin-top: 10px;">
+                                    <a href="${generateWorldCatLink(item.title, item.author)}" target="_blank" class="book-link">🏛️ Library</a>
+                                    <a href="${generateAmazonLink(item.title, item.author)}" target="_blank" class="book-link">📦 Amazon</a>
+                                    <a href="${generateGoodreadsLink(item.title, item.author)}" target="_blank" class="book-link">📖 Goodreads</a>
+                                </div>
                             </div>
                             <button class="remove-favorite" onclick="removeFavorite(${index})" title="Remove">×</button>
                         </div>
