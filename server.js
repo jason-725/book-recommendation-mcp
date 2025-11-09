@@ -59,7 +59,8 @@ async function callOpenRouter(messages) {
     body: JSON.stringify({
       model: 'openai/gpt-4o-mini',
       messages: messages,
-      temperature: 0.7
+      temperature: 0.7,
+      max_tokens: 1500  // Limit response length for faster completion
     })
   });
 
@@ -88,24 +89,24 @@ app.post('/api/recommend', async (req, res) => {
       long: 'over 400 pages'
     };
 
-    const prompt = `You are a knowledgeable book recommendation assistant. Based on the following preferences, recommend 3 books with detailed explanations:
+    const prompt = `Based on the following preferences, recommend 3 books:
 
 Genres: ${genres.join(', ')}
 Book Length: ${lengthMap[length]}
 Topics: ${topics.join(', ')}
 
-For each book, provide:
-1. Title and Author
-2. Page count (approximate)
-3. A brief summary (2-3 sentences)
-4. Why it matches their preferences
+For each book (numbered 1, 2, and 3), provide:
+- Title and Author
+- Page count (approximate)
+- A brief summary (2-3 sentences)
+- Why it matches their preferences
 
-Format your response clearly and engagingly.`;
+Write in a warm, conversational tone as if speaking directly to a reader. Use clear paragraphs with line breaks between books. Number each recommendation (1, 2, 3) but avoid using other markdown formatting symbols (**, ###, emojis). Write naturally and professionally, like a knowledgeable librarian having a friendly conversation.`;
 
     const messages = [
       { 
         role: 'system', 
-        content: 'You are an expert librarian and book recommendation specialist with deep knowledge of literature across all genres.' 
+        content: 'You are an experienced librarian with decades of knowledge about books across all genres. You speak in a warm, professional, conversational tone - friendly but not overly casual. You write in clear prose with simple numbering (1, 2, 3) but without markdown formatting, emojis, or special symbols like ** or ###. Your recommendations are thoughtful, well-reasoned, and tailored to each reader. You write as if having a one-on-one conversation with a book lover who trusts your expertise.' 
       },
       { 
         role: 'user', 
